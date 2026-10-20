@@ -1,5 +1,5 @@
-# CityScope: Current weather
+# CityScope: Forecasts and temperature units
 
-- Added the current conditions panel.
-- The page requests temperature, humidity, wind and feels-like values.
-- The status message updates when data is loading or unavailable.
+- Added hourly and daily weather forecasts.
+- Visitors can switch temperature units and change the forecast period.
+- The page requests updated data when the settings change.

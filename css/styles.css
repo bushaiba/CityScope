@@ -56,3 +56,13 @@ input[type=search], select { width:100%; min-width:0; padding:12px 14px; border-
 .metrics span { display:block; color:#cde3e3; font-size:.72rem; }
 .metrics strong { overflow-wrap:anywhere; }
 @media(min-width:760px){.weather-grid { grid-template-columns:1fr 1fr; }}
+
+.preference-grid { display:grid; gap:12px; }
+fieldset { border:0; padding:0; margin:0; }
+fieldset label { display:inline-flex; align-items:center; gap:5px; margin:0 12px 0 0; font-weight:500; }
+.forecast-list { display:grid; gap:10px; margin-top:14px; }
+.forecast-day { background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:13px; }
+.forecast-day strong { display:block; margin-top:8px; font-size:1.15rem; }
+.hourly-list { display:flex; gap:9px; overflow-x:auto; padding:8px 0; }
+.hourly-item { flex:0 0 110px; border:1px solid var(--line); border-radius:9px; background:var(--paper); padding:10px; text-align:center; }
+@media(min-width:560px) { .preference-grid { grid-template-columns:1fr 1fr; } .forecast-list { grid-template-columns:repeat(3,1fr); } }

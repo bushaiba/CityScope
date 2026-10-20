@@ -42,10 +42,33 @@ byId("city-form").addEventListener("submit",event=>{event.preventDefault();if(ev
 byId("quick-buttons").querySelectorAll("button").forEach(button=>{
   button.addEventListener("click",()=>choosePrimary(locations[button.dataset.city]));
 });
-async function fetchPrimary(loc, signal) {
-  const args=new URLSearchParams({latitude:loc.latitude,longitude:loc.longitude,current:"temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m",timezone:"auto"});
-  return {weather:await getJson(`https://api.open-meteo.com/v1/forecast?${args}`,signal)};
+function weatherUrl(loc){
+  const args=new URLSearchParams({latitude:loc.latitude,longitude:loc.longitude,current:"temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m",hourly:"temperature_2m,precipitation_probability",daily:"temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset",temperature_unit:getUnit(),forecast_days:String(getDays()),timezone:"auto"});
+  return `https://api.open-meteo.com/v1/forecast?${args}`;
 }
+async function fetchPrimary(loc, signal) { return {weather:await getJson(weatherUrl(loc),signal)}; }
+function renderForecast(){
+  const daily=primary.weather.daily;const list=byId("daily-list");list.replaceChildren();
+  daily.time.forEach((day,i)=>{
+    const card=document.createElement("div");card.className="forecast-day";
+    const label=document.createElement("span");label.textContent=day;
+    const temp=document.createElement("strong");temp.textContent=`${Math.round(daily.temperature_2m_max[i])}° / ${Math.round(daily.temperature_2m_min[i])}°`;
+    const rain=document.createElement("small");rain.textContent=`Rain probability: ${daily.precipitation_probability_max[i]}%`;
+    card.append(label,temp,rain);list.append(card);
+  });
+  const hourly=primary.weather.hourly;const list2=byId("hourly-list");list2.replaceChildren();
+  hourly.time.slice(0,12).forEach((hour,i)=>{
+    const tile=document.createElement("div");tile.className="hourly-item";
+    const time=document.createElement("div");time.textContent=hour.slice(11);
+    const temp=document.createElement("strong");temp.textContent=`${Math.round(hourly.temperature_2m[i])}°`;
+    const rain=document.createElement("small");rain.textContent=`${hourly.precipitation_probability[i]}% rain`;
+    tile.append(time,temp,rain);list2.append(tile);
+  });
+  byId("forecast").hidden=false;
+}
+function reload(){if(primary)loadPrimary(primary.location);}
+document.querySelectorAll('input[name="unit"]').forEach(el=>el.addEventListener("change",reload));
+byId("days").addEventListener("change",reload);
 async function loadPrimary(loc){
   requestController?.abort();requestController=new AbortController();
   byId("selected-city").textContent=`Loading ${labelOf(loc)}…`;
@@ -66,4 +89,5 @@ function renderPrimary(){
   byId("humidity").textContent=`${w.relative_humidity_2m}%`;
   byId("wind").textContent=`${w.wind_speed_10m} km/h`;
   byId("feels-like").textContent=`Feels like ${Math.round(w.apparent_temperature)}°`;
+  renderForecast();
 }
