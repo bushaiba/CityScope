@@ -66,3 +66,11 @@ fieldset label { display:inline-flex; align-items:center; gap:5px; margin:0 12px
 .hourly-list { display:flex; gap:9px; overflow-x:auto; padding:8px 0; }
 .hourly-item { flex:0 0 110px; border:1px solid var(--line); border-radius:9px; background:var(--paper); padding:10px; text-align:center; }
 @media(min-width:560px) { .preference-grid { grid-template-columns:1fr 1fr; } .forecast-list { grid-template-columns:repeat(3,1fr); } }
+
+.air-panel { background:#ebf7f4; border-radius:13px; padding:20px; }
+.air-panel strong { font-size:2.8rem; color:#006e63; }
+.info-grid { display:grid; gap:14px; }
+.pill { display:inline-block; padding:4px 10px; background:#d8efe7; border-radius:100px; font-size:.75rem; font-weight:800; }
+input[type=range] { width:100%; accent-color:var(--green); }
+.checklabel { display:flex; align-items:center; gap:9px; font-size:.84rem; }
+@media(min-width:700px) { .info-grid { grid-template-columns:1fr 1fr; } }

@@ -1,5 +1,5 @@
-# CityScope: Forecasts and temperature units
+# CityScope: Air quality and daylight
 
-- Added hourly and daily weather forecasts.
-- Visitors can switch temperature units and change the forecast period.
-- The page requests updated data when the settings change.
+- Added European AQI, PM2.5 and PM10.
+- Added sunrise and sunset details from Sunrise-Sunset.org.
+- Kept the weather data visible if an extra service fails.

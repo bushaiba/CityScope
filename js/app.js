@@ -46,7 +46,59 @@ function weatherUrl(loc){
   const args=new URLSearchParams({latitude:loc.latitude,longitude:loc.longitude,current:"temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m",hourly:"temperature_2m,precipitation_probability",daily:"temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset",temperature_unit:getUnit(),forecast_days:String(getDays()),timezone:"auto"});
   return `https://api.open-meteo.com/v1/forecast?${args}`;
 }
-async function fetchPrimary(loc, signal) { return {weather:await getJson(weatherUrl(loc),signal)}; }
+async function fetchPrimary(loc, signal) {
+  const base=await getJson(weatherUrl(loc),signal);
+  const airArgs=new URLSearchParams({latitude:loc.latitude,longitude:loc.longitude,current:"european_aqi,pm2_5,pm10",timezone:"auto"});
+  const sunArgs=new URLSearchParams({lat:loc.latitude,lng:loc.longitude,formatted:"0"});
+  const [aqi,daylight]=await Promise.allSettled([
+    byId("include-air").checked ? getJson(`https://air-quality-api.open-meteo.com/v1/air-quality?${airArgs}`,signal) : Promise.resolve(null),
+    getJson(`https://api.sunrise-sunset.org/json?${sunArgs}`,signal)
+  ]);
+  return {weather:base,air:aqi.status==="fulfilled"?aqi.value:null,sun:daylight.status==="fulfilled"?daylight.value:null};
+}
+function renderExtra(){
+  const visible=byId("include-air").checked;byId("air-panel").hidden=!visible;
+  if(visible){const a=primary.air?.current;const value=a?.european_aqi;
+    byId("aqi").textContent=value==null?"Unavailable":String(value);
+    byId("pm25").textContent=a?.pm2_5 ?? "—";byId("pm10").textContent=a?.pm10 ?? "—";
+    const threshold=Number(byId("threshold").value);
+    byId("threshold-label").textContent=String(threshold);
+    byId("aqi-note").textContent=value==null?"Air-quality service unavailable.":value>threshold?`AQI above your watch threshold of ${threshold}.`:`AQI at or below ${threshold}.`;
+  }
+  const sun=primary.sun?.results;
+  const daily=primary.weather.daily;
+  const zone=primary.weather.timezone||primary.location.timezone||"UTC";
+  const format=value=>{try{return new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:zone}).format(new Date(value));}catch{return "—";}};
+  const fallback=iso=>iso?.slice(11,16)||"—";
+  byId("sunrise").textContent=sun?.sunrise?format(sun.sunrise):fallback(daily.sunrise?.[0]);
+  byId("sunset").textContent=sun?.sunset?format(sun.sunset):fallback(daily.sunset?.[0]);
+  byId("daylight-note").textContent=sun?"Source: Sunrise-Sunset.org":"Fallback: Open-Meteo";
+}
+byId("include-air").addEventListener("change",reload);
+byId("threshold").addEventListener("input",()=>{if(primary)renderExtra();else byId("threshold-label").textContent=byId("threshold").value;});
+async function loadPrimary(loc){
+  requestController?.abort();requestController=new AbortController();
+  byId("selected-city").textContent=`Loading ${labelOf(loc)}…`;
+  setStatus("Retrieving current weather…");
+  try {
+    const data=await fetchPrimary(loc,requestController.signal);
+    if(requestController.signal.aborted) return;
+    primary={location:loc,...data};renderPrimary();
+    setStatus(`Loaded ${loc.name}.`);
+  } catch(error) {if(!requestController.signal.aborted)setStatus(`Unable to load weather: ${error.message}`,true);}
+}
+function choosePrimary(loc){loadPrimary(loc);}
+function renderPrimary(){
+  const w=primary.weather.current;
+  byId("selected-city").textContent=labelOf(primary.location);
+  byId("weather-output").hidden=false;
+  byId("temperature").textContent=`${Math.round(w.temperature_2m)}°`;
+  byId("humidity").textContent=`${w.relative_humidity_2m}%`;
+  byId("wind").textContent=`${w.wind_speed_10m} km/h`;
+  byId("feels-like").textContent=`Feels like ${Math.round(w.apparent_temperature)}°`;
+  renderForecast();
+  renderExtra();
+}
 function renderForecast(){
   const daily=primary.weather.daily;const list=byId("daily-list");list.replaceChildren();
   daily.time.forEach((day,i)=>{
@@ -69,25 +121,3 @@ function renderForecast(){
 function reload(){if(primary)loadPrimary(primary.location);}
 document.querySelectorAll('input[name="unit"]').forEach(el=>el.addEventListener("change",reload));
 byId("days").addEventListener("change",reload);
-async function loadPrimary(loc){
-  requestController?.abort();requestController=new AbortController();
-  byId("selected-city").textContent=`Loading ${labelOf(loc)}…`;
-  setStatus("Retrieving current weather…");
-  try {
-    const data=await fetchPrimary(loc,requestController.signal);
-    if(requestController.signal.aborted) return;
-    primary={location:loc,...data};renderPrimary();
-    setStatus(`Loaded ${loc.name}.`);
-  } catch(error) {if(!requestController.signal.aborted)setStatus(`Unable to load weather: ${error.message}`,true);}
-}
-function choosePrimary(loc){loadPrimary(loc);}
-function renderPrimary(){
-  const w=primary.weather.current;
-  byId("selected-city").textContent=labelOf(primary.location);
-  byId("weather-output").hidden=false;
-  byId("temperature").textContent=`${Math.round(w.temperature_2m)}°`;
-  byId("humidity").textContent=`${w.relative_humidity_2m}%`;
-  byId("wind").textContent=`${w.wind_speed_10m} km/h`;
-  byId("feels-like").textContent=`Feels like ${Math.round(w.apparent_temperature)}°`;
-  renderForecast();
-}
