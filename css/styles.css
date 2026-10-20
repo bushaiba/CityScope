@@ -74,3 +74,15 @@ fieldset label { display:inline-flex; align-items:center; gap:5px; margin:0 12px
 input[type=range] { width:100%; accent-color:var(--green); }
 .checklabel { display:flex; align-items:center; gap:9px; font-size:.84rem; }
 @media(min-width:700px) { .info-grid { grid-template-columns:1fr 1fr; } }
+
+[data-theme="dark"] { --bg:#101e26; --paper:#172e36; --ink:#eaf3f2; --muted:#b5ccca; --line:#3b535c; --green:#82d9c9; }
+[data-theme="dark"] .air-panel { background:#193940; }
+[data-theme="dark"] .air-panel strong { color:#a1eee0; }
+[data-theme="dark"] .quick button { background:#22473f; color:#d4f0e7; }
+[data-theme="dark"] .pill { background:#2d5650; }
+[data-theme="dark"] .btn { color:#123d3b; }
+.theme-button { padding:8px 12px; border:1px solid #b4ded8; background:transparent; color:white; border-radius:8px; }
+.compare-grid { display:grid; gap:14px; }
+.compare-card { border:1px solid var(--line); padding:17px; border-radius:12px; }
+.compare-card strong { font-size:2.3rem; }
+@media(min-width:650px){.compare-grid{grid-template-columns:1fr 1fr;}}

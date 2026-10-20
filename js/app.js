@@ -121,3 +121,37 @@ function renderForecast(){
 function reload(){if(primary)loadPrimary(primary.location);}
 document.querySelectorAll('input[name="unit"]').forEach(el=>el.addEventListener("change",reload));
 byId("days").addEventListener("change",reload);
+function chooseSecondary(loc){loadSecondary(loc);}
+async function loadSecondary(loc){
+  setStatus("Loading comparison data…",false,"compare-status");
+  try {
+    const args=new URLSearchParams({latitude:loc.latitude,longitude:loc.longitude,current:"temperature_2m",temperature_unit:getUnit(),timezone:"auto"});
+    const weather=await getJson(`https://api.open-meteo.com/v1/forecast?${args}`);
+    secondary={location:loc,weather};renderCompare();setStatus("Comparison ready.",false,"compare-status");
+  } catch(error){setStatus(`Comparison failed: ${error.message}`,true,"compare-status");}
+}
+function renderCompare(){
+  if(!primary || !secondary)return;
+  byId("compare-output").hidden=false;
+  byId("compare-a").textContent=labelOf(primary.location);
+  byId("compare-b").textContent=labelOf(secondary.location);
+  const a=primary.weather.current.temperature_2m;
+  const b=secondary.weather.current.temperature_2m;
+  byId("compare-a-temp").textContent=`${Math.round(a)}°`;
+  byId("compare-b-temp").textContent=`${Math.round(b)}°`;
+  byId("compare-summary").textContent=`Current temperature difference: ${Math.abs(a-b).toFixed(1)}°.`;
+}
+byId("compare-form").addEventListener("submit",event=>{
+  event.preventDefault();if(!event.target.reportValidity())return;
+  if(!primary){setStatus("Load a primary city first.",true,"compare-status");return;}
+  findCities(byId("compare-query").value,"compare-results","compare-status",chooseSecondary);
+});
+function applyTheme(theme){document.body.dataset.theme=theme;
+  byId("theme-toggle").setAttribute("aria-pressed",String(theme==="dark"));
+  byId("theme-toggle").textContent=theme==="dark"?"Light mode":"Dark mode";
+  try{localStorage.setItem("cityscope-theme",theme);}catch{/* Optional */}
+}
+let saved="light";try{saved=localStorage.getItem("cityscope-theme")||"light";}catch{/* Optional */}
+applyTheme(saved);
+byId("theme-toggle").addEventListener("click",()=>applyTheme(document.body.dataset.theme==="dark"?"light":"dark"));
+document.querySelectorAll('input[name="unit"]').forEach(input=>input.addEventListener('change',()=>{secondary=null;byId('compare-output').hidden=true;}));
