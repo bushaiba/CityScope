@@ -3,14 +3,127 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CityScope | Global environmental explorer</title>
-  <meta name="description" content="Explore weather and environmental data for cities around the world.">
+  <meta name="theme-color" content="#f6f8fa">
+  <meta name="description" content="CityScope: compare live weather forecasts, air quality and daylight around the world.">
+  <title>CityScope | Global environmental intelligence</title>
   <link rel="stylesheet" href="css/styles.css">
-  <script src="js/app.js" defer></script>
+  <script defer src="js/app.js"></script>
 </head>
-<body>
+<body id="top">
   <a class="skip-link" href="#main">Skip to main content</a>
-  <header><div class="container header-row"><a class="brand" href="#top">city<span>scope.</span></a><nav aria-label="Main navigation"><a href="#explore">Explore</a><a href="#compare">Compare</a><a href="#about">About</a></nav><button id="theme-toggle" class="theme-button" type="button" aria-pressed="false">Dark mode</button></div></header>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="#top" aria-label="CityScope home">
+        <span class="brand-mark" aria-hidden="true"><span class="mark-core"></span><span class="mark-orbit"></span></span>
+        <span>city<span class="brand-light">scope</span><span class="brand-dot">.</span></span>
+      </a>
+      <nav class="header-nav" aria-label="Main navigation">
+        <a href="#explorer">Explorer</a>
+        <a href="#compare">Compare</a>
+        <a href="#about">About</a>
+      </nav>
+      <button class="theme-button" type="button" id="theme-toggle" aria-pressed="false" aria-label="Switch to dark theme"><span aria-hidden="true">◐</span> <span id="theme-label">Dark mode</span></button>
+    </div>
+  </header>
+
   <main id="main">
-    <section class="hero" id="top"><div class="container"><p class="kicker">CityScope / An environmental data explorer</p><h1>Understand a city beyond the forecast.</h1><p>Explore weather and environmental data for cities around the world.</p><a class="action" href="#explore">Explore cities ↗</a></div></section>
-    <section id="explore" class="block"><div class="container"><p class="eyebrow">01 / Discover</p><h2>City explorer</h2><div class="panel"><form id="city-form" role="search"><label for="city-query">Search for a city</label><div class="form-row"><input id="city-query" name="city" type="search" minlength="2" maxlength="70" placeholder="e.g. Copenhagen" required><button type="submit" class="btn">Find city</button></div></form><p class="small">Or choose a popular city:</p><div class="quick" id="quick-buttons"><button type="button" data-city="Manchester">Manchester</button><button type="button" data-city="Dubai">Dubai</button><button type="button" data-city="Tokyo">Tokyo</button><button type="button" data-city="Nairobi">Nairobi</button><button type="button" data-city="Sydney">Sydney</button></div><div class="results" id="results" aria-label="City search results"></div><p id="status" class="message" role="status" aria-live="polite">Ready to explore.</p></div><p id="selected-city" class="small" role="status">No city selected.</p><div class="panel"><h3>View preferences</h3><div class="preference-grid"><fieldset><legend>Temperature units</legend><label><input type="radio" name="unit" value="celsius" checked> Celsius</label><label><input type="radio" name="unit" value="fahrenheit"> Fahrenheit</label></fieldset><div><label for="days">Forecast length</label><select id="days"><option value="3">3 days</option><option value="5">5 days</option><option value="7">7 days</option></select></div><div><label class="checklabel"><input id="include-air" type="checkbox" checked> Include air quality</label></div><div><label for="threshold">AQI watch threshold: <output id="threshold-label">60</output></label><input id="threshold" type="range" min="20" max="100" step="20" value="60"><p class="small">Informational preference, not a health warning.</p></div></div></div><div id="weather-output" class="weather-grid" hidden><article class="weather-card"><p class="kicker">Current weather</p><div id="temperature" class="big-temp">—</div><p id="feels-like"></p><div class="metrics"><div><span>Humidity</span><strong id="humidity">—</strong></div><div><span>Wind</span><strong id="wind">—</strong></div><div><span>Temperature</span><strong>Live API</strong></div></div></article><article class="air-panel" id="air-panel"><h3>Air quality</h3><strong id="aqi">—</strong><p>European AQI</p><p>PM2.5: <span id="pm25">—</span> µg/m³ · PM10: <span id="pm10">—</span> µg/m³</p><p id="aqi-note" role="status"></p></article></div><section id="forecast" class="panel" hidden aria-labelledby="forecast-title"><h3 id="forecast-title">Forecast data</h3><p>Hourly temperatures and daily conditions.</p><h4>Daily forecast</h4><div class="forecast-list" id="daily-list"></div><h4>Next twelve hours</h4><div class="hourly-list" id="hourly-list"></div></section><section class="panel"><h3>Daylight</h3><div class="info-grid"><p>Sunrise <strong id="sunrise">—</strong></p><p>Sunset <strong id="sunset">—</strong></p></div><p id="daylight-note" class="small">Daylight API details appear after selecting a city.</p></section></div></section><section id="compare" class="block"><div class="container"><p class="eyebrow">02 / Compare</p><h2>Two cities. One perspective.</h2><div class="panel"><form id="compare-form"><label for="compare-query">Second city</label><div class="form-row"><input id="compare-query" type="search" minlength="2" maxlength="70" placeholder="e.g. Paris" required><button class="btn" type="submit">Search</button></div></form><div id="compare-results" class="results" aria-label="Comparison search results"></div><p class="message" id="compare-status" role="status" aria-live="polite">Load a primary city first.</p><div id="compare-output" hidden><div class="compare-grid"><div class="compare-card"><h3 id="compare-a"></h3><strong id="compare-a-temp"></strong></div><div class="compare-card"><h3 id="compare-b"></h3><strong id="compare-b-temp"></strong></div></div><p id="compare-summary"></p></div></div></div></section><section id="about" class="block"><div class="container"><p class="eyebrow">About / The idea</p><h2>Clearer data, better decisions.</h2><p>CityScope is a small web app using public data. It turns public API responses into accessible information without requiring registration or payment.</p><p>Location data: <a href="https://open-meteo.com/en/docs/geocoding-api">Open-Meteo Geocoding</a>.</p><p>Weather source: <a href="https://open-meteo.com/en/docs">Open-Meteo Forecast API</a>.</p><p>Additional sources: <a href="https://open-meteo.com/en/docs/air-quality-api">Open-Meteo Air Quality</a> and <a href="https://sunrise-sunset.org/api">Sunrise-Sunset.org</a>.</p></div></section></main><footer class="footer"><div class="container"><p>CityScope · 2026</p></div></footer></body></html>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="shell hero-grid">
+        <div class="hero-content">
+          <p class="eyebrow"><span class="eyebrow-line"></span> A GLOBAL DATA EXPLORER</p>
+          <h1 id="hero-title">Understand a city <em>beyond the forecast.</em></h1>
+          <p class="hero-description">Explore weather, air quality and daylight in one place. Search the world, compare conditions and see the data behind each insight.</p>
+          <a class="hero-link" href="#explorer">Explore live conditions <span aria-hidden="true">↗</span></a>
+          <div class="hero-facts"><span><span class="live-dot" aria-hidden="true"></span> Live API data</span><span>Global city search</span><span>Mobile first</span></div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div>
+          <div class="hero-globe"><div class="globe-line globe-line-v"></div><div class="globe-line globe-line-h"></div><div class="globe-cross">✳</div></div>
+          <div class="floating-tag tag-one"><span>↗</span> Temperature</div>
+          <div class="floating-tag tag-two"><span>●</span> Air quality</div>
+          <div class="floating-tag tag-three"><span>☼</span> Daylight</div>
+          <div class="art-caption">CONDITIONS / WORLDWIDE</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="explorer-section" id="explorer" aria-labelledby="explorer-title">
+      <div class="shell">
+        <div class="section-heading">
+          <div><p class="eyebrow">01 / DISCOVER</p><h2 id="explorer-title">Live city explorer</h2><p>Start with a popular city or search anywhere in the world.</p></div>
+          <span class="data-badge"><span class="live-dot" aria-hidden="true"></span> Powered by live APIs</span>
+        </div>
+        <div class="search-panel">
+          <form id="city-form" role="search" autocomplete="off">
+            <label for="city-query">Search for a city</label>
+            <div class="search-row">
+              <div class="search-input-wrap"><span aria-hidden="true">⌕</span><input id="city-query" name="city" type="search" placeholder="e.g. Copenhagen, Nairobi, Tokyo" minlength="2" maxlength="70" required aria-describedby="search-help" spellcheck="false"></div>
+              <button class="btn btn-primary" id="search-button" type="submit">Find city <span aria-hidden="true">→</span></button>
+            </div>
+            <p class="field-help" id="search-help">Enter at least two characters, then choose a matching location.</p>
+          </form>
+          <div class="quick-search" aria-label="Quick city choices"><span>Quick explore</span>
+            <div class="quick-buttons" id="quick-buttons">
+              <button type="button" data-preset="manchester">Manchester</button><button type="button" data-preset="dubai">Dubai</button><button type="button" data-preset="tokyo">Tokyo</button><button type="button" data-preset="nairobi">Nairobi</button><button type="button" data-preset="sydney">Sydney</button>
+            </div>
+          </div>
+          <div class="search-results" id="search-results" hidden aria-label="Matching cities"></div>
+          <p class="message" id="search-message" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="preferences" aria-labelledby="preferences-title">
+          <h3 id="preferences-title">View preferences</h3>
+          <div class="preferences-grid">
+            <fieldset class="unit-fieldset"><legend>Temperature</legend><label><input type="radio" name="temperature-unit" value="celsius" checked> °C Celsius</label><label><input type="radio" name="temperature-unit" value="fahrenheit"> °F Fahrenheit</label></fieldset>
+            <div class="preference-field"><label for="forecast-days">Forecast length</label><select id="forecast-days" name="forecast-days"><option value="3" selected>3 days</option><option value="5">5 days</option><option value="7">7 days</option></select></div>
+            <label class="check-option"><input type="checkbox" id="show-air" checked> Include air quality data</label>
+            <div class="threshold-field"><label for="aqi-threshold">AQI watch threshold <output id="threshold-value" for="aqi-threshold">60</output></label><input id="aqi-threshold" type="range" min="20" max="100" value="60" step="20"><p>Informational personal threshold, not a medical alert.</p></div>
+          </div>
+        </div>
+
+        <div class="dashboard" id="dashboard" aria-busy="false" hidden>
+          <div class="dashboard-topline"><div><p class="eyebrow">CURRENT CONDITIONS</p><h3 id="location-title">City</h3><p id="location-subtitle" class="location-subtitle"></p></div><p class="updated" id="updated-time"></p></div>
+          <div id="dashboard-message" class="message" role="status" aria-live="polite"></div>
+          <div class="overview-grid">
+            <article class="main-weather card">
+              <div class="card-overline">LIVE WEATHER <span id="weather-time"></span></div>
+              <div class="big-temperature"><span id="weather-icon" class="weather-icon" aria-hidden="true">☀</span><strong id="current-temp">--°</strong></div>
+              <h4 id="weather-description">Current conditions</h4>
+              <p id="feels-like"></p>
+              <div class="weather-metrics"><div><span>Humidity</span><strong id="humidity">--</strong></div><div><span>Wind</span><strong id="wind">--</strong></div><div><span>Today</span><strong id="today-high-low">--</strong></div></div>
+            </article>
+            <article class="air-card card" id="air-card">
+              <div class="card-overline">AIR QUALITY <span>European AQI</span></div>
+              <div class="aqi-head"><strong id="aqi-value">--</strong><span class="quality-pill" id="aqi-label">Loading</span></div>
+              <div class="aqi-scale" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+              <p id="aqi-description" class="muted"></p>
+              <div class="pollutant-grid"><div><span>PM2.5</span><strong id="pm25">--</strong><small>µg/m³</small></div><div><span>PM10</span><strong id="pm10">--</strong><small>µg/m³</small></div></div>
+              <p class="threshold-notice" id="threshold-notice" role="status"></p>
+            </article>
+          </div>
+          <div class="lower-grid">
+            <section class="card forecast-card" aria-labelledby="hourly-heading"><div class="card-heading"><div><p class="eyebrow">THE NEXT HOURS</p><h4 id="hourly-heading">Hourly outlook</h4></div><span>Temperature + rain chance</span></div><div id="hourly-chart" class="chart-scroll" aria-label="Hourly temperature chart"></div></section>
+            <section class="card daylight-card" aria-labelledby="daylight-heading"><div class="card-heading"><div><p class="eyebrow">DAYLIGHT DATA</p><h4 id="daylight-heading">Sunrise & sunset</h4></div><span>Local time</span></div><div class="daylight-visual" aria-hidden="true"><span>☼</span></div><div class="daylight-times"><div><span>Sunrise</span><strong id="sunrise">--:--</strong></div><div><span>Sunset</span><strong id="sunset">--:--</strong></div></div><p class="data-caption" id="daylight-source">Daylight data supplied separately when available.</p></section>
+          </div>
+          <section class="daily-section" aria-labelledby="daily-heading"><div class="card-heading"><div><p class="eyebrow">LOOKING AHEAD</p><h4 id="daily-heading">Daily outlook</h4></div><span id="daily-range-label"></span></div><div class="daily-grid" id="daily-list"></div></section>
+        </div>
+        <div class="empty-state" id="empty-state"><div aria-hidden="true" class="empty-symbol">◎</div><h3>One city. A clearer picture.</h3><p>Choose a city above to load environmental data and explore the forecast.</p></div>
+      </div>
+    </section>
+
+    <section class="compare-section" id="compare" aria-labelledby="compare-title"><div class="shell compare-grid">
+      <div class="compare-intro"><p class="eyebrow">02 / COMPARE</p><h2 id="compare-title">Two cities.<br>One perspective.</h2><p>Compare current conditions with a second city. Differences are calculated from the same weather and air-quality measurements.</p><div class="compare-points"><span>↗ Side-by-side temperatures</span><span>↗ Air quality context</span><span>↗ Difference at a glance</span></div></div>
+      <div class="compare-tool card">
+        <h3>City comparison</h3><p>Load a primary city first, then find a second destination.</p>
+        <form id="compare-form" role="search" autocomplete="off"><label for="compare-query">Second city</label><div class="compare-form-row"><input type="search" id="compare-query" minlength="2" maxlength="70" placeholder="Search another city" required><button class="btn btn-secondary" type="submit">Search</button></div></form>
+        <div id="compare-results" class="search-results" hidden></div>
+        <p id="compare-message" class="message" role="status" aria-live="polite"></p>
+        <div id="compare-output" hidden><div class="compare-cards"><div class="compare-city"><small>PRIMARY CITY</small><h4 id="compare-a-name"></h4><strong id="compare-a-temp"></strong><p id="compare-a-aqi"></p></div><div class="compare-city"><small>SECOND CITY</small><h4 id="compare-b-name"></h4><strong id="compare-b-temp"></strong><p id="compare-b-aqi"></p></div></div><p class="compare-summary" id="compare-summary"></p></div>
+      </div>
+    </div></section>
+
+    <section id="about" class="about-section" aria-labelledby="about-heading"><div class="shell about-grid"><div><p class="eyebrow">03 / BEHIND THE DATA</p><h2 id="about-heading">Built for clarity.<br>Driven by data.</h2><p>CityScope combines multiple public APIs to turn coordinates and JSON responses into readable comparisons. Weather and air quality are forecast estimates, not ground-station measurements.</p></div><div class="source-list"><div><span class="source-index">01</span><div><strong>City location search</strong><p>Open-Meteo Geocoding API converts a search into coordinates.</p></div></div><div><span class="source-index">02</span><div><strong>Weather + air quality</strong><p>Open-Meteo forecast and air-quality endpoints supply temperature, pollution indices and outlooks.</p></div></div><div><span class="source-index">03</span><div><strong>Daylight</strong><p>Sunrise-Sunset.org supplies sunrise/sunset times; forecast data is used as a fallback.</p></div></div></div></div></section>
+  </main>
+  <footer class="site-footer"><div class="shell footer-row"><div><a class="footer-brand" href="#top">cityscope<span>.</span></a><p>Made for my Web Technologies coursework.</p></div><div class="footer-links"><a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo ↗</a><a href="https://sunrise-sunset.org/api" target="_blank" rel="noopener noreferrer">Sunrise-Sunset ↗</a><a href="#top">Back to top ↑</a></div></div></footer>
+</body>
+</html>
