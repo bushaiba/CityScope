@@ -1,4 +1,4 @@
-/* CityScope's early mobile-first stylesheet. Extended at each milestone. */
+/* Base styles, starting from the mobile layout. */
 :root { --bg:#f4f8f9; --paper:#fff; --ink:#17303b; --muted:#57717a; --line:#d6e5e8; --green:#007a70; --deep:#102d34; }
 * { box-sizing:border-box; }
 html { scroll-behavior:smooth; }
@@ -47,3 +47,12 @@ input[type=search], select { width:100%; min-width:0; padding:12px 14px; border-
 .message { color:var(--green); min-height:1.6em; font-size:.85rem; }
 .message[data-error="true"] { color:#a43d38; }
 @media(min-width:600px) { .form-row { flex-direction:row; align-items:stretch; } .form-row input { flex:1; } }
+
+.weather-grid { display:grid; gap:14px; margin-top:17px; }
+.weather-card { background:#123f47; color:white; border-radius:14px; padding:23px; }
+.weather-card p { color:#c9e6e6; }
+.big-temp { font-size:clamp(3.5rem,12vw,6rem); font-weight:750; letter-spacing:-.07em; line-height:1.15; }
+.metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; padding-top:15px; margin-top:17px; border-top:1px solid #6b9a9f; }
+.metrics span { display:block; color:#cde3e3; font-size:.72rem; }
+.metrics strong { overflow-wrap:anywhere; }
+@media(min-width:760px){.weather-grid { grid-template-columns:1fr 1fr; }}
