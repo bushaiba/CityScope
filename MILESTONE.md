@@ -1,6 +1,6 @@
-# Milestone 1: 01 Foundation
+# Milestone 2: 02 City Search
 
-Set up a semantic HTML page, navigation, initial styling and an application concept.
+Add a usable city-search form, geocoding API and quick-pick locations.
 
 This is a functional, staged release produced for review. This release does not assert an earlier date of development.
 
