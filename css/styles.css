@@ -1,0 +1,36 @@
+/* CityScope's early mobile-first stylesheet. Extended at each milestone. */
+:root { --bg:#f4f8f9; --paper:#fff; --ink:#17303b; --muted:#57717a; --line:#d6e5e8; --green:#007a70; --deep:#102d34; }
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { margin:0; font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif; background:var(--bg); color:var(--ink); }
+.container { width:min(1080px,calc(100% - 32px)); margin:auto; }
+.skip-link { position:absolute; left:12px; top:-90px; padding:9px; background:var(--ink); color:white; z-index:50; }
+.skip-link:focus { top:12px; }
+a { color:inherit; }
+:focus-visible { outline:3px solid #e8a76a; outline-offset:3px; }
+header { background:var(--deep); color:white; }
+.header-row { min-height:70px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.brand { font-size:1.4rem; font-weight:800; text-decoration:none; letter-spacing:-.04em; }
+.brand span { color:#80e7cf; }
+nav { display:flex; gap:16px; font-size:.8rem; }
+nav a { text-decoration:none; }
+nav a:hover { text-decoration:underline; }
+.hero { background:linear-gradient(120deg,#13333d,#14565d); color:white; padding:72px 0; }
+.kicker { color:#98e6d2; text-transform:uppercase; font-size:.7rem; letter-spacing:.17em; font-weight:800; }
+h1 { font-size:clamp(2.6rem,10vw,4.2rem); line-height:1.1; letter-spacing:-.055em; max-width:780px; margin:10px 0 22px; }
+.hero p { max-width:570px; }
+.action { display:inline-block; text-decoration:none; margin-top:12px; background:#a2efdc; color:#103b37; font-weight:750; padding:12px 18px; border-radius:9px; }
+section.block { padding:58px 0; }
+h2 { font-size:clamp(1.75rem,6vw,2.6rem); line-height:1.2; margin:0 0 12px; }
+h3 { font-size:1.18rem; margin:0 0 10px; }
+p { color:var(--muted); }
+.hero p, header p, footer p { color:#c9e4e4; }
+.panel { background:var(--paper); border:1px solid var(--line); border-radius:15px; padding:20px; margin-top:20px; }
+.small { font-size:.8rem; }
+.eyebrow { color:var(--green); font-size:.72rem; text-transform:uppercase; letter-spacing:.15em; font-weight:800; }
+.footer { background:var(--deep); color:white; padding:26px 0; }
+.footer p { margin:0; }
+button,input,select { font:inherit; }
+button { cursor:pointer; }
+[hidden] { display:none !important; }
+@media (min-width:720px) { .container { width:min(1080px,calc(100% - 64px)); } }
